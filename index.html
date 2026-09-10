@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Siemens Energy | Imagen Perfecta Sie7e</title>
+<meta name="description" content="Catálogo interactivo de productos promocionales personalizado para Siemens Energy. Imagen Perfecta Sie7e — Asesores en Marketing.">
+<link rel="icon" type="image/svg+xml" href="assets/img/brand/favicon-leaf-bolt.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+<script>
+  // Aplica el tema guardado antes de pintar la página, para evitar parpadeo.
+  try {
+    if (localStorage.getItem("ip7_theme") === "dark") {
+      document.documentElement.setAttribute("data-theme", "dark");
+    }
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<div id="cursor-ring" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
+
+<header class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <a href="#top" class="brand">
+      <img src="assets/img/brand/logo-siemens-color.png" alt="Siemens Energy" class="brand-logo logo-light" onerror="this.style.display='none';">
+      <img src="assets/img/brand/logo-siemens-blanco.png" alt="Siemens Energy" class="brand-logo logo-dark" onerror="this.style.display='none';">
+      <span class="brand-wordmark">Siemens Energy<small>Catálogo · by IP7</small></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#catalogo" data-close>Productos</a>
+      <a href="#categorias" data-close>Categorías</a>
+      <a href="#cotizar" data-close class="js-open-drawer">Mis productos</a>
+      <a href="#" data-close class="js-toggle-access nav-access-link">Acceder</a>
+    </nav>
+
+    <div class="navbar-actions">
+      <button class="theme-toggle" id="themeToggle" type="button" aria-label="Apagar la luz">
+        <span class="theme-toggle-icon" id="themeToggleIcon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none">
+            <rect class="switch-plate" x="6" y="2.5" width="12" height="19" rx="3.6" stroke="currentColor" stroke-width="1.7"/>
+            <rect class="switch-paddle" x="9" y="11.4" width="6" height="7.6" rx="1.8" fill="currentColor"/>
+            <circle class="switch-glow" cx="12" cy="8" r="1.5" fill="#F5C518"/>
+          </svg>
+        </span>
+        <span id="themeToggleText">Apagar la luz</span>
+      </button>
+      <button class="cart-chip js-open-drawer" type="button" aria-label="Ver productos seleccionados">
+        <span class="cart-chip-icon">🛒</span>
+        <span id="cartChipText">0 productos seleccionados</span>
+      </button>
+      <button class="btn btn-primary btn-sm js-toggle-access" type="button" id="accessBtn">Acceder</button>
+      <button class="hamburger" id="hamburger" aria-label="Abrir menú" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-bg">
+      <video id="heroBgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+        <source src="assets/video/hero-bg.mp4" type="video/mp4">
+      </video>
+      <div class="hero-bg-scrim" aria-hidden="true"></div>
+    </div>
+    <h1 class="sr-only">Energía para un mundo mejor — Siemens Energy</h1>
+    <div class="hero-actions">
+      <div class="dropdown" id="exploreDropdown">
+        <button class="btn btn-ghost btn-lg dropdown-toggle" type="button" id="exploreDropdownToggle" aria-haspopup="true" aria-expanded="false">
+          Explorar productos
+          <svg class="dropdown-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="dropdown-menu" id="exploreDropdownMenu">
+          <a href="#toolbar" data-close>Ver catálogo Siemens Energy</a>
+          <a href="#descargas" data-close>Descargar</a>
+          <div class="dropdown-divider"></div>
+          <span class="dropdown-label">Más opciones de IP7</span>
+          <a href="https://ip7.cataprom.com/seccion/inicio.html" target="_blank" rel="noopener">Portafolio 1</a>
+          <a href="https://ip7-alternativa.muy.promo/" target="_blank" rel="noopener">Portafolio 2</a>
+          <a href="https://www.promocionalesenlinea.com/Imagenperfecta7?limit=42" target="_blank" rel="noopener">Portafolio 3</a>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-lg js-open-whatsapp" type="button">Contactar a mi ejecutivo</button>
+    </div>
+  </section>
+
+  <section class="catalog" id="catalogo">
+    <div class="toolbar" id="toolbar">
+      <div class="search-box">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/><path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="text" id="searchInput" placeholder="¿Qué producto estás buscando?" autocomplete="off">
+      </div>
+      <div class="filter-pills" id="categorias">
+        <button class="pill is-active" data-filter="todos" type="button">Todos</button>
+        <button class="pill" data-filter="tecnologia" type="button">Tecnología</button>
+        <button class="pill" data-filter="viaje" type="button">Bebidas</button>
+        <button class="pill" data-filter="paraguas" type="button">Paraguas</button>
+        <button class="pill" data-filter="bolsos" type="button">Bolsos y Morrales</button>
+        <button class="pill" data-filter="vestuario" type="button">Textiles</button>
+        <button class="pill" data-filter="reconocimientos" type="button">Reconocimientos</button>
+        <button class="pill" data-filter="oficina" type="button">Oficina y Escritura</button>
+        <button class="pill" data-filter="eventos" type="button">Eventos y Señalización</button>
+        <button class="pill" data-filter="comestibles" type="button">Comestibles</button>
+        <button class="pill" data-filter="accesorios" type="button">Accesorios</button>
+      </div>
+    </div>
+
+    <div id="noResults" class="no-results" hidden>
+      <p>No encontramos productos con ese criterio.</p>
+      <button class="btn btn-outline btn-sm" id="clearFilters" type="button">Limpiar filtros</button>
+    </div>
+
+    <div id="catalogSections"></div>
+
+    <p class="catalog-note">Todos los productos están sujetos a inventario. Precios válidos hasta el 31 de diciembre de 2026. Estos valores son simulados — la cotización final será compartida por su ejecutivo asignado. <button type="button" class="link-btn js-open-pricing-notice">Ver condiciones de precio</button></p>
+
+  </section>
+
+  <section class="worked-carousel" id="trabajados">
+    <div class="section-head">
+      <span class="eyebrow">Nuestro trabajo</span>
+      <h2>Productos adicionales trabajados</h2>
+    </div>
+    <div class="wc" id="workedCarousel">
+      <button class="wc-arrow wc-prev" type="button" aria-label="Ver anterior">‹</button>
+      <div class="wc-viewport">
+        <div class="wc-track" id="workedTrack"></div>
+      </div>
+      <button class="wc-arrow wc-next" type="button" aria-label="Ver siguiente">›</button>
+    </div>
+  </section>
+
+  <section class="partners" id="aliados">
+    <div class="section-head">
+      <span class="eyebrow">Alianzas</span>
+      <h2>Proveedores premium</h2>
+      <p>Llevamos tu marca a productos de primer nivel gracias a nuestras alianzas con las mejores marcas del mercado.</p>
+    </div>
+    <ul class="partners-grid">
+      <li>Stanley</li>
+      <li>Mario Hernández</li>
+      <li>Arturo Calle</li>
+      <li>Hugo Boss</li>
+      <li>Ralph Lauren</li>
+      <li>Lacoste</li>
+      <li>Adidas</li>
+      <li>Éxito</li>
+      <li>Juan Valdez</li>
+      <li>Café Quindío</li>
+      <li>Alkosto</li>
+      <li>Homecenter</li>
+      <li>Decathlon</li>
+      <li>Brisa</li>
+    </ul>
+  </section>
+
+  <section class="pdf-downloads" id="descargas">
+    <div class="section-head">
+      <span class="eyebrow">Recursos descargables</span>
+      <h2>Catálogos completos en PDF</h2>
+      <p>Descarga los catálogos completos de IP7 por línea de producto, listos para compartir internamente.</p>
+    </div>
+    <div class="pdf-grid">
+      <a class="pdf-card" href="assets/pdf/catalogo-ecologico.pdf" target="_blank" rel="noopener">
+        <span class="pdf-icon">📄</span>
+        <span class="pdf-card-name">Ecológico</span>
+        <span class="pdf-card-size">67.9 MB</span>
+      </a>
+      <a class="pdf-card" href="assets/pdf/catalogo-comestibles.pdf" target="_blank" rel="noopener">
+        <span class="pdf-icon">📄</span>
+        <span class="pdf-card-name">Comestibles</span>
+        <span class="pdf-card-size">60.4 MB</span>
+      </a>
+      <a class="pdf-card" href="assets/pdf/catalogo-trofeos-placas-medallas.pdf" target="_blank" rel="noopener">
+        <span class="pdf-icon">📄</span>
+        <span class="pdf-card-name">Trofeos, Placas y Medallas</span>
+        <span class="pdf-card-size">61.5 MB</span>
+      </a>
+      <a class="pdf-card" href="assets/pdf/catalogo-litografia.pdf" target="_blank" rel="noopener">
+        <span class="pdf-icon">📄</span>
+        <span class="pdf-card-name">Litografía</span>
+        <span class="pdf-card-size">46.8 MB</span>
+      </a>
+      <a class="pdf-card" href="assets/pdf/catalogo-portadocumentos.pdf" target="_blank" rel="noopener">
+        <span class="pdf-icon">📄</span>
+        <span class="pdf-card-name">Portadocumentos</span>
+        <span class="pdf-card-size">32.5 MB</span>
+      </a>
+      <a class="pdf-card" href="assets/pdf/catalogo-inflables.pdf" target="_blank" rel="noopener">
+        <span class="pdf-icon">📄</span>
+        <span class="pdf-card-name">Inflables</span>
+        <span class="pdf-card-size">3.7 MB</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer" id="contacto">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <img src="assets/img/brand/logo-blanco.png" alt="Imagen Perfecta Sie7e" class="footer-logo" onerror="this.style.display='none';">
+      <p>Catálogo elaborado por Imagen Perfecta Sie7e para Siemens Energy · Asesores en Marketing, productos promocionales.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <p>✉️ <a href="mailto:mercadeo@ip7.com.co">mercadeo@ip7.com.co</a></p>
+      <p>📍 Cl. 72A #63-12, Bogotá</p>
+    </div>
+    <div class="footer-col">
+      <h4>Catálogo</h4>
+      <p><a href="#catalogo">Ver todos los productos</a></p>
+      <p><a href="#" class="js-open-drawer">Mis productos seleccionados</a></p>
+      <p><a href="#" class="js-open-pricing-notice">Condiciones de precio</a></p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Imagen Perfecta Sie7e. Todos los derechos reservados.</span>
+    <span class="footer-bottom-sep">·</span>
+    <span>Creado por <a href="https://www.linkedin.com/in/sneyther-linares-576265230/" target="_blank" rel="noopener" style="text-decoration: underline;">Sneyther Linares</a>, Coordinador Comercial y de Mercadeo</span>
+  </div>
+</footer>
+
+<!-- Floating mobile contact bar -->
+<div class="mobile-bar" id="mobileBar">
+  <button class="mobile-bar-item js-open-drawer" type="button">
+    <span class="mb-icon">🧾</span><span>Cotizar</span>
+    <span class="mb-badge" id="mobileCartBadge" hidden>0</span>
+  </button>
+  <button class="mobile-bar-item js-open-whatsapp" type="button">
+    <span class="mb-icon">🧑‍💼</span><span>Ejecutivo</span>
+  </button>
+</div>
+
+<!-- Desktop floating cart button -->
+<button class="cart-fab js-open-drawer" id="cartFab" type="button" aria-label="Ver mis productos seleccionados">
+  <span class="cart-fab-icon">🛒</span>
+  <span class="cart-fab-count" id="cartFabCount">0</span>
+</button>
+
+<!-- Cart / selection drawer -->
+<div class="backdrop" id="backdrop"></div>
+<aside class="drawer" id="cartDrawer" aria-hidden="true">
+  <div class="drawer-head">
+    <h3>🛒 Mis productos seleccionados</h3>
+    <button class="icon-btn js-close-panels" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody">
+    <p class="drawer-empty" id="drawerEmpty">Aún no has seleccionado productos. Explora el catálogo y agrega los que te interesen.</p>
+    <ul class="drawer-list" id="drawerList"></ul>
+  </div>
+  <div class="drawer-foot">
+    <div class="drawer-total" id="drawerTotal" hidden>
+      <span>Valor total estimado</span>
+      <strong id="drawerTotalValue">$0</strong>
+    </div>
+    <p class="drawer-total-note">Precio de referencia. No incluye fletes ni costos adicionales — tu ejecutivo te confirma el valor final.</p>
+    <button class="btn btn-primary btn-lg btn-block" id="goToQuoteBtn" type="button" disabled>Solicitar cotización</button>
+  </div>
+</aside>
+
+<!-- Quote request modal -->
+<div class="modal" id="quoteModal" aria-hidden="true">
+  <div class="modal-card modal-card-lg">
+    <button class="icon-btn modal-close js-close-panels" aria-label="Cerrar">✕</button>
+    <div class="modal-head">
+      <span class="eyebrow">Solicitud de cotización</span>
+      <h3>Quiero estos productos</h3>
+      <p>Completa tus datos y tu ejecutivo de cuenta, <strong>Sevastian Velosa</strong>, te contactará con tu cotización personalizada.</p>
+    </div>
+    <form id="quoteForm">
+      <div class="form-grid">
+        <label class="field">
+          <span>Nombre *</span>
+          <input type="text" name="nombre" required>
+        </label>
+        <label class="field">
+          <span>Empresa *</span>
+          <input type="text" name="empresa" required>
+        </label>
+        <label class="field">
+          <span>Correo electrónico *</span>
+          <input type="email" name="correo" required>
+        </label>
+        <label class="field">
+          <span>Teléfono *</span>
+          <input type="tel" name="telefono" required>
+        </label>
+        <label class="field field-full">
+          <span>Ciudad</span>
+          <input type="text" name="ciudad">
+        </label>
+        <label class="field field-full">
+          <span>Comentarios adicionales</span>
+          <textarea name="comentarios" rows="3" placeholder="Cuéntanos detalles como tiempos de entrega, personalización, colores, etc."></textarea>
+        </label>
+      </div>
+
+      <div class="quote-summary">
+        <h4>Productos seleccionados</h4>
+        <ul id="quoteSummaryList" class="quote-summary-list"></ul>
+      </div>
+
+      <div class="quote-actions">
+        <button type="submit" class="btn btn-primary btn-lg btn-block">Enviar solicitud por correo</button>
+        <div class="quote-actions-row">
+          <button type="button" class="btn btn-outline btn-sm" id="copyRequestBtn">Copiar solicitud</button>
+        </div>
+        <p class="quote-hint">Al enviar, se abrirá tu cliente de correo con la solicitud lista para confirmar el envío directamente a Sevastian.</p>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Aviso de condiciones de precio -->
+<div class="modal" id="pricingNoticeModal" aria-hidden="true">
+  <div class="modal-card">
+    <button class="icon-btn modal-close js-close-panels" aria-label="Cerrar">✕</button>
+    <div class="modal-head">
+      <span class="eyebrow">Antes de cotizar</span>
+      <h3>Condiciones de precio</h3>
+    </div>
+    <ul class="pricing-notice-list">
+      <li>Los valores mencionados <strong>no incluyen costos adicionales</strong> como fletes.</li>
+      <li>El precio incluye personalización de <strong>1 logo, 1 tinta, 1 marca</strong>. Otras opciones de marcación se cotizan aparte.</li>
+      <li><strong>Estos valores son simulados</strong> — la cotización final será compartida por su ejecutivo asignado.</li>
+      <li><strong>Todas las imágenes son de referencia.</strong></li>
+      <li><strong>Mercancía sujeta a disponibilidad</strong> de inventario.</li>
+      <li><strong>Precios válidos hasta el 31 de diciembre de 2026.</strong></li>
+    </ul>
+    <button type="button" class="btn btn-primary btn-block js-close-panels">Entendido</button>
+  </div>
+</div>
+
+<!-- Acceso con clave (los precios solo se ven tras iniciar sesión) -->
+<div class="modal" id="loginModal" aria-hidden="true">
+  <div class="modal-card">
+    <button class="icon-btn modal-close js-close-panels" aria-label="Cerrar">✕</button>
+    <div class="modal-head">
+      <span class="eyebrow">Acceso privado</span>
+      <h3>Ingresa para ver los precios</h3>
+      <p>Este catálogo muestra los valores de referencia solo a usuarios con acceso. Solicita la clave a tu contacto en IP7.</p>
+    </div>
+    <form id="loginForm">
+      <div class="form-grid">
+        <label class="field field-full">
+          <span>Usuario</span>
+          <input type="text" name="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" required>
+        </label>
+        <label class="field field-full">
+          <span>Contraseña</span>
+          <input type="password" name="clave" autocomplete="off" required>
+        </label>
+      </div>
+      <p class="login-error" id="loginError" hidden>Usuario o contraseña incorrectos.</p>
+      <button type="submit" class="btn btn-primary btn-lg btn-block">Acceder</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<template id="cardTemplate">
+  <article class="card">
+    <div class="card-media">
+      <img loading="lazy" src="" alt="">
+      <span class="card-code"></span>
+      <button type="button" class="gallery-arrow gallery-prev" aria-label="Foto anterior">‹</button>
+      <button type="button" class="gallery-arrow gallery-next" aria-label="Foto siguiente">›</button>
+      <div class="gallery-dots"></div>
+    </div>
+    <div class="card-body">
+      <h3 class="card-title"></h3>
+      <p class="card-desc"></p>
+      <ul class="card-features"></ul>
+      <p class="card-price"></p>
+      <div class="card-qty">
+        <span class="qty-label">Cantidad</span>
+        <div class="qty-control">
+          <button type="button" class="qty-btn qty-minus" aria-label="Restar">–</button>
+          <input type="number" class="qty-input" max="50000" inputmode="numeric">
+          <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
+        </div>
+        <div class="qty-presets"></div>
+      </div>
+      <button type="button" class="btn btn-primary btn-block card-add">Agregar al carrito</button>
+    </div>
+  </article>
+</template>
+
+<script src="assets/js/products.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

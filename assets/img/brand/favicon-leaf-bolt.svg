@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="leafGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7ED957"/>
+      <stop offset="100%" stop-color="#0F7A3D"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="248" fill="none" stroke="url(#leafGrad)" stroke-width="16"/>
+  <path d="M256 96
+           C 340 150, 388 210, 388 288
+           C 388 366, 328 416, 256 416
+           C 184 416, 124 366, 124 288
+           C 124 210, 172 150, 256 96 Z"
+        fill="url(#leafGrad)"/>
+  <path d="M270 150 L200 292 L246 292 L232 380 L322 232 L272 232 Z" fill="#ffffff"/>
+</svg>

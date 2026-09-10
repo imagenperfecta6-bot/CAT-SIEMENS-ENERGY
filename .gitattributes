@@ -1,0 +1,13 @@
+# Normaliza finales de línea en archivos de texto
+* text=auto
+
+# Tratar como binarios (no tocar finales de línea)
+*.jpg   binary
+*.jpeg  binary
+*.png   binary
+*.gif   binary
+*.webp  binary
+*.mp4   binary
+*.pdf   binary
+*.woff  binary
+*.woff2 binary
