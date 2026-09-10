@@ -837,46 +837,47 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   /* ---------------------------------------------------------------------
-     CARRUSEL "ALGUNOS PRODUCTOS TRABAJADOS"
-     Avanza una foto a la izquierda cada 5 s, en bucle infinito. Pausa al
+     CARRUSEL "PRODUCTOS ADICIONALES TRABAJADOS"
+     Avanza una foto a la izquierda cada 3 s, en bucle infinito. Pausa al
      pasar el mouse por encima y cuando la pestaña no está visible.
-     Las fotos salen de assets/img/productos-adicionales/ (01.jpg, 02.jpg, …).
-     Para agregar más: el usuario deja los PNG/JPG en la subcarpeta
-     "Productos adicionales" de la carpeta del proyecto y se re-exportan
-     numerados aquí.
+     Las fotos salen de assets/img/productos-adicionales/ numeradas
+     01.jpg, 02.jpg, 03.jpg … SIN saltos: el carrusel prueba 01, 02, 03…
+     y se detiene en el primer número que falte.
      --------------------------------------------------------------------- */
   (function initWorkedCarousel() {
     const wc = document.getElementById("workedCarousel");
     const track = document.getElementById("workedTrack");
     if (!wc || !track) return;
 
-    const MAX_SLIDES = 20;
-    const INTERVAL = 5000;
+    const MAX_SLIDES = 99; // tope de seguridad
+    const INTERVAL = 3000;
     const GAP = 20; // debe coincidir con el gap del CSS (.wc-track)
     const section = wc.closest("section");
-    const checks = [];
 
-    for (let i = 1; i <= MAX_SLIDES; i++) {
-      const n = String(i).padStart(2, "0");
-      const slide = document.createElement("div");
-      slide.className = "wc-slide";
-      const img = new Image();
-      img.alt = "Producto trabajado " + i;
-      checks.push(
-        new Promise((res) => {
-          img.onload = () => res(true);
-          img.onerror = () => {
-            slide.remove();
-            res(false);
-          };
-        })
-      );
-      img.src = "assets/img/productos-adicionales/" + n + ".jpg";
-      slide.appendChild(img);
-      track.appendChild(slide);
+    let idx = 0;
+    let done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      setup();
     }
-
-    Promise.allSettled(checks).then(setup);
+    function probeNext() {
+      idx += 1;
+      if (idx > MAX_SLIDES) return finish();
+      const n = String(idx).padStart(2, "0");
+      const img = new Image();
+      img.alt = "Producto trabajado " + idx;
+      img.onload = () => {
+        const slide = document.createElement("div");
+        slide.className = "wc-slide";
+        slide.appendChild(img);
+        track.appendChild(slide);
+        probeNext();
+      };
+      img.onerror = finish; // primer hueco -> fin de la lista
+      img.src = "assets/img/productos-adicionales/" + n + ".jpg";
+    }
+    probeNext();
 
     function setup() {
       const viewport = wc.querySelector(".wc-viewport");
