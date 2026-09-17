@@ -64,7 +64,7 @@ const PRODUCTS = [
     category: "tecnologia",
     description: "Banco de energía de 20.000 mAh compatible con cualquier dispositivo alimentado por USB. Pantalla LED para seguimiento preciso del nivel de batería y chip inteligente de carga segura.",
     features: ["20.000 mAh", "Pantalla LED", "Chip de carga inteligente"],
-    minQty: 1,
+    minQty: 10,
     images: [
       "assets/img/productos/power-bank-20000.jpg",
       "assets/img/productos/power-bank-20000-2.jpg",
@@ -169,7 +169,7 @@ const PRODUCTS = [
     category: "oficina",
     description: "Ideal para empresas, eventos o regalos promocionales. Tamaño carta o media carta. Encuadernado con argolla metálica resistente. Hojas blancas o rayadas, con opción de impresión personalizada. Portada y contraportada en cartón plastificado a todo color.",
     features: ["Carta o media carta", "Impresión personalizada", "Portada plastificada"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/cuaderno-argollado.jpg"],
   },
   {
@@ -771,7 +771,7 @@ const PRODUCTS = [
     category: "vestuario",
     description: "Comodidad, abrigo y estilo en un solo producto. Ideal para uniformes, eventos o promociones. Disponible en varios colores y tallas. Personalízalo con tu logo en bordado o estampado.",
     features: ["Con capota", "Varios colores", "Bordado o estampado"],
-    minQty: 1,
+    minQty: 10,
     images: [
       "assets/img/productos/buso-capota-dp.jpg",
       "assets/img/productos/buso-capota-dp-2.jpg",
@@ -784,7 +784,7 @@ const PRODUCTS = [
     category: "vestuario",
     description: "Comodidad, abrigo y estilo en un solo producto. Ideal para uniformes, eventos o promociones. Disponible en varios colores y tallas. Personalízalo con tu logo en bordado o estampado.",
     features: ["Cuello cadete", "Varios colores", "Bordado o estampado"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/buso-cuello-cadete-gildan.jpg"],
   },
   {
@@ -794,7 +794,7 @@ const PRODUCTS = [
     category: "vestuario",
     description: "Comodidad, abrigo y estilo en un solo producto. Ideal para uniformes, eventos o promociones. Disponible en varios colores y tallas. Personalízalo con tu logo en bordado o estampado.",
     features: ["Cierre frontal", "Varios colores", "Bordado o estampado"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/buso-abierto-gildan.jpg"],
   },
   {
@@ -804,7 +804,7 @@ const PRODUCTS = [
     category: "vestuario",
     description: "Comodidad, abrigo y estilo en un solo producto. Ideal para uniformes, eventos o promociones. Disponible en varios colores y tallas. Personalízalo con tu logo en bordado o estampado.",
     features: ["Manga larga", "Varios colores", "Bordado o estampado"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/buso-manga-larga-gildan.jpg"],
   },
   {
@@ -834,7 +834,7 @@ const PRODUCTS = [
     category: "reconocimientos",
     description: "Pin personalizado troquelado y pintado, presentado con tarjeta. Ideal para llevar tu marca a todas partes con estilo y personalidad.",
     features: ["Troquelado", "Presentación con tarjeta"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/pin-con-tarjeta.jpg"],
   },
   {
@@ -844,7 +844,7 @@ const PRODUCTS = [
     category: "reconocimientos",
     description: "Pin en troquel pintado. Ideal para llevar tu marca a todas partes con estilo y personalidad.",
     features: ["Troquel pintado"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/pin-pintado.jpg"],
   },
   {
@@ -854,7 +854,7 @@ const PRODUCTS = [
     category: "reconocimientos",
     description: "Pin personalizado en litorrecina, ideal para llevar tu marca a todas partes con estilo y personalidad.",
     features: ["Litorrecina"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/pin-litorrecina.jpg"],
   },
   {
@@ -924,7 +924,7 @@ const PRODUCTS = [
     category: "reconocimientos",
     description: "Cintas para colgar carnet de cuello, ideales para identificar a tu equipo de forma práctica y profesional. Personalizadas con tu logo y colores corporativos. Incluyen gancho metálico y opción de broche de seguridad.",
     features: ["Gancho metálico", "Broche de seguridad", "Colores corporativos"],
-    minQty: 1,
+    minQty: 10,
     images: ["assets/img/productos/cintas-carnet.jpg"],
   },
 
@@ -966,7 +966,7 @@ const PRODUCTS = [
     category: "eventos",
     description: "Calendarios personalizados para tu empresa. Organiza, promociona y permanece presente todo el año.",
     features: ["A la medida", "Presencia todo el año"],
-    minQty: 1,
+    minQty: 20,
     images: ["assets/img/productos/calendario-personalizado.jpg"],
   },
   {
