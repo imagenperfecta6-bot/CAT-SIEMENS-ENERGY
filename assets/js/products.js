@@ -750,6 +750,39 @@ const PRODUCTS = [
       "assets/img/productos/organizador-viaje-va945-2.jpg",
     ],
   },
+  {
+    id: "maleta-viajera-ac",
+    name: "Maleta Viajera con Protección Superior",
+    code: "AC",
+    category: "bolsos",
+    description: "Prepárate para tus aventuras con la máxima protección y estilo gracias a las maletas viajeras de Arturo Calle. Su exterior, fabricado en 100% policarbonato, ofrece una resistencia superior a los impactos, garantizando que tus pertenencias lleguen seguras a tu destino.",
+    features: ["100% policarbonato", "Resistente a impactos", "Arturo Calle"],
+    minQty: 10,
+    images: ["assets/img/productos/maleta-viajera-ac.jpg"],
+  },
+  {
+    id: "morral-bomba-compresion-ac",
+    name: "Morral con Bomba de Compresión",
+    code: "AC",
+    category: "bolsos",
+    description: "Lleva todo lo que necesitas con estilo y comodidad en este morral para hombre fabricado en resistente poliéster con detalles en poliuretano, diseñado para los viajeros modernos que buscan funcionalidad, seguridad y la máxima optimización de espacio.",
+    features: ["Bomba de compresión", "Poliéster y poliuretano", "Arturo Calle"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/morral-bomba-compresion-ac.jpg",
+      "assets/img/productos/morral-bomba-compresion-ac-2.jpg",
+    ],
+  },
+  {
+    id: "maleta-cabina-bronce-mh",
+    name: "Maleta De Cabina Bronce MH By Condor",
+    code: "MH",
+    category: "bolsos",
+    description: "Hechas en ABS con policarbonato, materiales de alta resistencia a los impactos y muy duraderos que combinados con el poliéster 600D hacen más ligera y práctica tu maleta. El forro es 100% poliéster con recubrimiento impermeable. Producto de Mario Hernández.",
+    features: ["ABS y policarbonato", "Forro impermeable", "Mario Hernández"],
+    minQty: 10,
+    images: ["assets/img/productos/maleta-cabina-bronce-mh.jpg"],
+  },
 
   // ---------------- VESTUARIO CORPORATIVO ----------------
   {
