@@ -124,6 +124,45 @@ const PRODUCTS = [
       "assets/img/productos/audifonos-bowie-te151-2.jpg",
     ],
   },
+  {
+    id: "audifonos-bluetooth-air-i7-te282",
+    name: "Audífonos Bluetooth Air I7",
+    code: "TE-282",
+    category: "tecnologia",
+    description: "Diseño sin cables, mini batería incorporada de 30mAh en cada auricular, con canal individual izquierdo y derecho, tanto el izquierdo como el derecho están habilitados para Bluetooth, se pueden usar por separado o se pueden usar como un solo par. El estuche funciona como cargador, con batería incorporada de 200mAh. Rango Bluetooth de 8 a 10 mts sin interferencia.",
+    features: ["Sin cables", "Estuche cargador 200mAh", "Bluetooth 8 a 10 m"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/audifonos-bluetooth-air-i7-te282.jpg",
+      "assets/img/productos/audifonos-bluetooth-air-i7-te282-2.jpg",
+    ],
+  },
+  {
+    id: "audifonos-wireless-crest-te738",
+    name: "Audífonos Wireless Crest",
+    code: "TE-738",
+    category: "tecnologia",
+    description: "Audífonos Bluetooth metálicos. Versión del Bluetooth: 5.4. Capacidad de la batería: 250 mAh. Tiempo de carga del estuche: 1 hora. Tiempo de carga de los audífonos: 45 minutos. Tiempo de reproducción: 4 horas. Mandos por touch. Incluye cable Tipo C para carga. Empaque caja individual.",
+    features: ["Bluetooth 5.4", "Mandos touch", "4 h de reproducción"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/audifonos-wireless-crest-te738.jpg",
+      "assets/img/productos/audifonos-wireless-crest-te738-2.jpg",
+    ],
+  },
+  {
+    id: "audifonos-bluetooth-baltic-te739",
+    name: "Audífonos Bluetooth Baltic",
+    code: "TE-739",
+    category: "tecnologia",
+    description: "Audífonos Bluetooth plásticos tipo Headphone con auriculares acolchados y haz de cabeza ajustable. Bluetooth 5.4. Batería interna: 400mAh. Distancia de trabajo: 10 m sin interrupciones. Tiempo de carga: 2 horas aprox. Tiempo de reproducción: 15 horas aprox. Empaque caja individual.",
+    features: ["Tipo headphone", "Bluetooth 5.4", "15 h de reproducción"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/audifonos-bluetooth-baltic-te739.jpg",
+      "assets/img/productos/audifonos-bluetooth-baltic-te739-2.jpg",
+    ],
+  },
 
   // ---------------- OFICINA Y ESCRITURA ----------------
   {
