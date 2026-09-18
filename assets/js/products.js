@@ -459,6 +459,42 @@ const PRODUCTS = [
       "assets/img/productos/termo-hydra-mu332-2.jpg",
     ],
   },
+  {
+    id: "termo-stanley-cafe-to-go",
+    name: "Termo Stanley Café-To-Go Travel Mug",
+    code: "Stanley",
+    category: "viaje",
+    description: "Este termo compacto de viaje te permite mantener caliente un espresso doble o un whisky con hielo durante horas. Con un diseño mejorado y un asa más amplia, la tapa de dos piezas mantiene tus bebidas a la temperatura ideal. Totalmente hermética y permite beber fácilmente.",
+    features: ["Tapa de dos piezas", "Totalmente hermético", "Asa más amplia"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/termo-stanley-cafe-to-go.jpg",
+      "assets/img/productos/termo-stanley-cafe-to-go-2.jpg",
+    ],
+  },
+  {
+    id: "termo-stanley-iceflow",
+    name: "Termo Stanley IceFlow Flip Straw Tumbler 2.0",
+    code: "Stanley",
+    category: "viaje",
+    description: "Diseñados para mantenerte hidratado con un estilo totalmente funcional. Ideales para ir al trabajo o entrenar en casa, cuentan con un pitillo integrado para beber fácilmente y sin esfuerzo. Ciérralo y el aislamiento al vacío de doble pared mantendrá tu bebida fría durante horas.",
+    features: ["Pitillo integrado", "Doble pared al vacío", "Mantiene frío"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/termo-stanley-iceflow.jpg",
+      "assets/img/productos/termo-stanley-iceflow-2.jpg",
+    ],
+  },
+  {
+    id: "termo-stanley-quencher-protour",
+    name: "Termo Stanley Quencher ProTour",
+    code: "Stanley",
+    category: "viaje",
+    description: "Presentamos el icónico Quencher, ahora con la tapa a prueba de fugas ProTour Flip Straw. Simplifica la hidratación: levanta el pitillo incorporado para beber y ciérralo al terminar. Los colores clásicos presentan gráficos modernos con una textura suave en el asa y una tapa bicolor.",
+    features: ["Tapa a prueba de fugas", "Pitillo Flip Straw", "Asa texturizada"],
+    minQty: 10,
+    images: ["assets/img/productos/termo-stanley-quencher-protour.jpg"],
+  },
 
   // ---------------- PARAGUAS ----------------
   {
