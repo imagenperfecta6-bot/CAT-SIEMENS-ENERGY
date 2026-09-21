@@ -470,6 +470,7 @@ const PRODUCTS = [
     images: [
       "assets/img/productos/termo-stanley-cafe-to-go.jpg",
       "assets/img/productos/termo-stanley-cafe-to-go-2.jpg",
+      "assets/img/productos/termo-stanley-cafe-to-go-3.jpg",
     ],
   },
   {
@@ -480,10 +481,7 @@ const PRODUCTS = [
     description: "Diseñados para mantenerte hidratado con un estilo totalmente funcional. Ideales para ir al trabajo o entrenar en casa, cuentan con un pitillo integrado para beber fácilmente y sin esfuerzo. Ciérralo y el aislamiento al vacío de doble pared mantendrá tu bebida fría durante horas.",
     features: ["Pitillo integrado", "Doble pared al vacío", "Mantiene frío"],
     minQty: 10,
-    images: [
-      "assets/img/productos/termo-stanley-iceflow.jpg",
-      "assets/img/productos/termo-stanley-iceflow-2.jpg",
-    ],
+    images: ["assets/img/productos/termo-stanley-iceflow.jpg"],
   },
   {
     id: "termo-stanley-quencher-protour",
@@ -531,6 +529,32 @@ const PRODUCTS = [
     images: [
       "assets/img/productos/paraguas-trendy-so172.jpg",
       "assets/img/productos/paraguas-trendy-so172-2.jpg",
+    ],
+  },
+  {
+    id: "paraguas-fiori-so49",
+    name: "Paraguas Fiori 23 Pulgadas",
+    code: "SO-49",
+    category: "paraguas",
+    description: "Poliéster pongee 190T. Mango de lujo en caucho y herraje metálico con fibra de vidrio reforzado. Apertura automática. Medidas: 23\" / casco 38 cm / largo total 83 cm / cobertura 102 cm.",
+    features: ["Apertura automática", "Mango de lujo en caucho", "Fibra de vidrio reforzada"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/paraguas-fiori-so49.jpg",
+      "assets/img/productos/paraguas-fiori-so49-2.jpg",
+    ],
+  },
+  {
+    id: "paraguas-cloudy-pa0167",
+    name: "Paraguas 21\" Cloudy",
+    code: "PA0167",
+    category: "paraguas",
+    description: "Paraguas de 21\" con 8 varillas, 3 secciones y apertura y cierre totalmente automáticos. Estructura con armazón chapado en negro y costillas de fibra de vidrio para mayor resistencia al viento. Tela pongee 190T con recubrimiento interior negro para protección UV, mango de plástico con seguro de bloqueo e incluye bolsa de guardado.",
+    features: ["Apertura y cierre automático", "Protección UV", "Incluye bolsa"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/paraguas-cloudy-pa0167.jpg",
+      "assets/img/productos/paraguas-cloudy-pa0167-2.jpg",
     ],
   },
 
@@ -783,6 +807,19 @@ const PRODUCTS = [
       "assets/img/productos/organizador-viaje-va945-2.jpg",
     ],
   },
+  {
+    id: "organizador-monet-va1181",
+    name: "Organizador Multiusos Monet",
+    code: "VA-1181",
+    category: "bolsos",
+    description: "Organizador en poliéster. Compartimientos internos con malla y velcro para organizar elementos.",
+    features: ["Poliéster", "Compartimientos con malla", "Cierre con velcro"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/organizador-monet-va1181.jpg",
+      "assets/img/productos/organizador-monet-va1181-2.jpg",
+    ],
+  },
 
   // ---------------- VESTUARIO CORPORATIVO ----------------
   {
@@ -801,6 +838,32 @@ const PRODUCTS = [
     images: [
       "assets/img/productos/gorra-eco-cap16.jpg",
       "assets/img/productos/gorra-eco-cap16-2.jpg",
+    ],
+  },
+  {
+    id: "gorra-brixton-cap30",
+    name: "Gorra Brixton Urban Travel",
+    code: "CAP-30",
+    category: "vestuario",
+    description: "Gorra de poliéster de alta calidad, de 6 paneles, con visera indeformable, botón forrado y cierre de hebilla metálica.",
+    features: ["Poliéster de alta calidad", "6 paneles", "Cierre de hebilla metálica"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/gorra-brixton-cap30.jpg",
+      "assets/img/productos/gorra-brixton-cap30-2.jpg",
+    ],
+  },
+  {
+    id: "gorra-mesh-cap31",
+    name: "Gorra Mesh Urban Travel",
+    code: "CAP-31",
+    category: "vestuario",
+    description: "Gorra en poliéster de alta calidad, de 6 paneles (4 de malla en la parte posterior y 2 de poliéster en el frente). Con botón forrado y visera indeformable. Con cierre plástico.",
+    features: ["6 paneles", "Malla posterior", "Cierre plástico"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/gorra-mesh-cap31.jpg",
+      "assets/img/productos/gorra-mesh-cap31-2.jpg",
     ],
   },
   {
@@ -853,6 +916,19 @@ const PRODUCTS = [
       { qty: "101 o más", price: 54900 },
     ],
     images: ["assets/img/productos/camisas-oxford.jpg"],
+  },
+  {
+    id: "camisa-formal-hombre-ac",
+    name: "Camisa Formal para Hombre",
+    code: "AC",
+    category: "vestuario",
+    description: "Esta camisa formal europea es la personificación de la distinción y la elegancia masculina. Confeccionada íntegramente en tela de 100% algodón, asegura una frescura y suavidad superiores durante toda la jornada. Producto de Arturo Calle.",
+    features: ["100% algodón", "Corte formal europeo", "Arturo Calle"],
+    minQty: 10,
+    images: [
+      "assets/img/productos/camisa-formal-hombre-ac.jpg",
+      "assets/img/productos/camisa-formal-hombre-ac-2.jpg",
+    ],
   },
   {
     id: "camiseta-polo",
