@@ -610,7 +610,7 @@ document.addEventListener("DOMContentLoaded", () => {
       `Ciudad: ${formData.ciudad || "-"}\n\n` +
       `Productos:\n${lineasProductos || "(sin productos seleccionados)"}\n\n` +
       `Valor total estimado: ${totalTxt}\n` +
-      `(Precio de referencia: no incluye fletes ni costos adicionales. Incluye 1 logo, 1 tinta, 1 marca. Sujeto a disponibilidad de inventario. Estos valores son simulados — la cotización final será compartida por su ejecutivo asignado.)\n\n` +
+      `(Precio de referencia: no incluye IVA, fletes ni costos adicionales. Incluye 1 logo, 1 tinta, 1 marca. Sujeto a disponibilidad de inventario. Estos valores son simulados — la cotización final será compartida por su ejecutivo asignado.)\n\n` +
       `Comentarios: ${formData.comentarios || "-"}`;
 
     return { ...formData, productos, mensaje };
