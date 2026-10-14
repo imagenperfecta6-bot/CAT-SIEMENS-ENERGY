@@ -851,6 +851,11 @@ h1,h2,h3,h4{ font-family:var(--font-head); font-weight:800; line-height:1.06; ma
 .size-table td{ padding:10px; color:var(--text); border-top:1px solid var(--border-soft); white-space:nowrap; }
 .size-table tbody tr:nth-child(even) td{ background:var(--surface-2); }
 .size-table td:first-child{ font-weight:700; }
+.size-guide-card{ max-width:780px; }
+/* Tabla de camisas: 7 columnas con encabezados largos (se parten en dos líneas) */
+.size-table-wide{ min-width:540px; font-size:.84rem; }
+.size-table-wide th{ white-space:normal; font-size:.76rem; line-height:1.25; padding:10px 6px; }
+.size-table-wide td{ padding:10px 6px; }
 
 /* ==========================================================================
    ACCESO CON CLAVE — los precios solo se ven tras iniciar sesión
