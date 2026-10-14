@@ -468,7 +468,6 @@ const PRODUCTS = [
     features: ["Tapa de dos piezas", "Totalmente hermético", "Asa más amplia"],
     minQty: 10,
     images: [
-      "assets/img/productos/termo-stanley-cafe-to-go.jpg",
       "assets/img/productos/termo-stanley-cafe-to-go-2.jpg",
       "assets/img/productos/termo-stanley-cafe-to-go-3.jpg",
     ],
