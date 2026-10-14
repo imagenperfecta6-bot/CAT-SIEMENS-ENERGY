@@ -826,6 +826,33 @@ h1,h2,h3,h4{ font-family:var(--font-head); font-weight:800; line-height:1.06; ma
 .pricing-notice-list strong{ color:var(--text); }
 
 /* ==========================================================================
+   GUÍA DE TALLAS (textiles)
+   ========================================================================== */
+.category-block-title{ display:flex; align-items:center; flex-wrap:wrap; gap:8px 16px; min-width:0; }
+.size-guide-btn{
+  background:var(--surface); border:1px solid var(--border); color:var(--purple);
+  font-family:inherit; font-size:.82rem; font-weight:700; padding:7px 14px;
+  border-radius:999px; cursor:pointer; transition:border-color .18s ease, background .18s ease;
+}
+.size-guide-btn:hover{ border-color:var(--purple); background:var(--surface-3); }
+.size-link{
+  align-self:flex-start; background:none; border:none; padding:0; cursor:pointer;
+  color:var(--purple); font-family:inherit; font-size:.8rem; font-weight:700;
+  text-decoration:underline; text-underline-offset:3px;
+}
+:root[data-theme="dark"] .size-guide-btn, :root[data-theme="dark"] .size-link{ color:#e4dcee; }
+.size-table-title{ font-size:1rem; color:var(--text); margin:6px 0 10px; }
+.table-scroll{ overflow-x:auto; margin-bottom:22px; border:1px solid var(--border); border-radius:14px; }
+.size-table{ width:100%; border-collapse:collapse; font-size:.88rem; text-align:center; min-width:340px; }
+.size-table th{
+  background:var(--surface-3); color:var(--text); font-weight:800;
+  padding:11px 10px; white-space:nowrap;
+}
+.size-table td{ padding:10px; color:var(--text); border-top:1px solid var(--border-soft); white-space:nowrap; }
+.size-table tbody tr:nth-child(even) td{ background:var(--surface-2); }
+.size-table td:first-child{ font-weight:700; }
+
+/* ==========================================================================
    ACCESO CON CLAVE — los precios solo se ven tras iniciar sesión
    ========================================================================== */
 .login-error{

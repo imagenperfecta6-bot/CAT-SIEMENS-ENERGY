@@ -214,6 +214,14 @@ document.addEventListener("DOMContentLoaded", () => {
     node.querySelector(".card-desc").textContent = product.description;
 
     const featuresEl = node.querySelector(".card-features");
+    // Prendas (no gorras): enlace a la guía de tallas junto a las características.
+    if (product.category === "vestuario" && !/^gorra/.test(product.id)) {
+      const sizeLink = document.createElement("button");
+      sizeLink.type = "button";
+      sizeLink.className = "size-link js-open-size-guide";
+      sizeLink.textContent = "📏 Ver guía de tallas";
+      featuresEl.insertAdjacentElement("afterend", sizeLink);
+    }
     product.features.forEach((f) => {
       const li = document.createElement("li");
       li.textContent = f;
@@ -308,9 +316,15 @@ document.addEventListener("DOMContentLoaded", () => {
       section.id = "cat-" + cat.slug;
       section.dataset.category = cat.slug;
 
+      const sizeBtn = cat.slug === "vestuario"
+        ? '<button type="button" class="size-guide-btn js-open-size-guide">📏 Guía de tallas</button>'
+        : "";
       section.innerHTML = `
         <div class="category-block-head">
-          <h3>${cat.label}</h3>
+          <div class="category-block-title">
+            <h3>${cat.label}</h3>
+            ${sizeBtn}
+          </div>
           <span class="category-count">${products.length} producto${products.length !== 1 ? "s" : ""}</span>
         </div>
         <div class="grid"></div>
@@ -486,6 +500,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const quoteModal = document.getElementById("quoteModal");
   const pricingNoticeModal = document.getElementById("pricingNoticeModal");
   const loginModal = document.getElementById("loginModal");
+  const sizeGuideModal = document.getElementById("sizeGuideModal");
 
   function openPanel(panel) {
     closeAllPanels();
@@ -499,6 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
     quoteModal.classList.remove("is-open");
     pricingNoticeModal.classList.remove("is-open");
     loginModal.classList.remove("is-open");
+    sizeGuideModal.classList.remove("is-open");
     document.body.style.overflow = "";
   }
 
@@ -808,6 +824,14 @@ document.addEventListener("DOMContentLoaded", () => {
       toggleAccess();
     })
   );
+
+  // Los enlaces de "guía de tallas" también se crean dinámicamente (catálogo).
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".js-open-size-guide")) {
+      e.preventDefault();
+      openPanel(sizeGuideModal);
+    }
+  });
 
   // Los enlaces "iniciar sesión" dentro de las tarjetas se crean dinámicamente,
   // por eso se escuchan por delegación.
