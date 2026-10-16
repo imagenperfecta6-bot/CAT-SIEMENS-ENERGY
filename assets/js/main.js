@@ -3,7 +3,7 @@
    ========================================================================== */
 const CONFIG = {
   // Correo donde deben llegar las solicitudes de cotización (con copia).
-  quoteEmail: "mercadeo@ip7.com.co",
+  quoteEmail: "ejecutivo.comercial3@ip7.com.co",
 };
 
 // Cantidad mínima por defecto, solo se usa si un producto no trae su propio
