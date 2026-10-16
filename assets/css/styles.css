@@ -78,6 +78,20 @@
 :root[data-theme="dark"] .card-price.is-quote{ color:#fff; }
 :root[data-theme="dark"] .qty-label{ color:#e4dcee; }
 :root[data-theme="dark"] .qty-presets button{ color:#fff; border-color:rgba(255,255,255,.3); }
+/* Más textos que usaban el morado de día (#612783) y casi no se leían sobre fondo oscuro:
+   etiquetas de sección, enlaces, precios y totales pasan a un lila claro. */
+:root[data-theme="dark"]{ --purple-ink:#d9b6f2; }
+:root[data-theme="dark"] .eyebrow,
+:root[data-theme="dark"] .link-btn,
+:root[data-theme="dark"] .size-guide-btn,
+:root[data-theme="dark"] .size-link,
+:root[data-theme="dark"] .price-locked button,
+:root[data-theme="dark"] .partners-grid li:hover,
+:root[data-theme="dark"] .drawer-item-price span.is-quote,
+:root[data-theme="dark"] .drawer-item-price strong,
+:root[data-theme="dark"] .drawer-total strong,
+:root[data-theme="dark"] .quote-summary-list li span:last-child,
+:root[data-theme="dark"] .pricing-notice-list li::before{ color:var(--purple-ink); }
 
 *,*::before,*::after{ box-sizing:border-box; }
 .theme-switching, .theme-switching *{ transition:none !important; }
