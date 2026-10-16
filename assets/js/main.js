@@ -743,6 +743,173 @@ document.addEventListener("DOMContentLoaded", () => {
   layoutHeroDay();
   window.addEventListener("resize", layoutHeroDay);
 
+  // Globo 3D de día (WebGL puro, sin librerías): esfera con la textura "Blue Marble" de la NASA,
+  // nubes procedurales y atmósfera. Gira de oeste a este de forma continua. Si WebGL o la
+  // textura fallan, se queda la foto fija de respaldo (con su oscilación en CSS).
+  function initHeroDayGL() {
+    const wrap = document.getElementById("heroDay");
+    const canvas = document.getElementById("heroDayGL");
+    if (!wrap || !canvas || !heroEl) return;
+    const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
+    if (!gl) return;
+
+    const VS = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }";
+    const FS = `
+      precision highp float;
+      uniform vec2 uRes;      // tamaño del canvas en px
+      uniform vec2 uCenter;   // centro del globo en px (origen arriba-izquierda)
+      uniform float uR;       // radio en px
+      uniform float uLon;     // longitud (rad) bajo el centro del disco
+      uniform float uCloud;   // desfase de las nubes (rad)
+      uniform sampler2D uTex;
+      const float PI = 3.14159265;
+      const float LAT0 = 0.0;  // latitud bajo el centro del disco (inclinación de cámara)
+
+      float hash(vec3 p){ p = fract(p * 0.3183099 + 0.1); p *= 17.0; return fract(p.x * p.y * p.z * (p.x + p.y + p.z)); }
+      float vnoise(vec3 x){
+        vec3 i = floor(x), f = fract(x); f = f * f * (3.0 - 2.0 * f);
+        return mix(mix(mix(hash(i), hash(i + vec3(1,0,0)), f.x), mix(hash(i + vec3(0,1,0)), hash(i + vec3(1,1,0)), f.x), f.y),
+                   mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
+      }
+      float fbm(vec3 p){ float a = 0.5, s = 0.0; for(int i = 0; i < 5; i++){ s += a * vnoise(p); p = p * 2.03 + 7.1; a *= 0.5; } return s; }
+
+      void main(){
+        vec2 frag = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);
+        vec2 q = (frag - uCenter) / uR; q.y = -q.y;       // y hacia arriba, radio = 1
+        float d = length(q);
+
+        // cielo: azul más profundo arriba, claro y luminoso hacia el borde del planeta
+        float h = clamp(frag.y / max(uCenter.y - uR, 1.0), 0.0, 1.0);
+        vec3 sky = mix(vec3(0.34, 0.60, 0.78), vec3(0.50, 0.73, 0.88), smoothstep(0.0, 1.0, h));
+        float glow = exp(-max(d - 1.0, 0.0) * 9.0);
+        vec3 col = mix(sky, vec3(0.74, 0.90, 0.97), glow * 0.85);
+
+        if (d < 1.0) {
+          float z = sqrt(1.0 - d * d);
+          vec3 n = vec3(q, z);
+          // de coordenadas de cámara a mundo (norte = +y), inclinando LAT0
+          float cl = cos(LAT0), sl = sin(LAT0);
+          vec3 w = vec3(n.x, n.y * cl + n.z * sl, n.z * cl - n.y * sl);
+          float lat = asin(clamp(w.y, -1.0, 1.0));
+          float lon = atan(w.x, w.z) + uLon;
+          vec2 uv = vec2(fract(lon / (2.0 * PI) + 0.5), 0.5 - lat / PI);
+          vec3 land = texture2D(uTex, uv).rgb;
+          land = pow(land, vec3(0.92)) * 1.08;
+
+          // nubes que giran un poco distinto al suelo
+          vec3 cp = vec3(w.x, w.y, w.z);
+          float ca = uCloud, cc = cos(ca), cs = sin(ca);
+          cp = vec3(cc * cp.x + cs * cp.z, cp.y, -cs * cp.x + cc * cp.z);
+          float c = fbm(cp * 3.2 + vec3(0.0, 0.0, 4.0));
+          c += 0.35 * (fbm(cp * 7.0) - 0.5);
+          float cloud = smoothstep(0.52, 0.80, c) * 0.85;
+
+          // luz del sol desde arriba-izquierda
+          vec3 L = normalize(vec3(-0.45, 0.55, 0.70));
+          float lam = max(dot(n, L), 0.0);
+          float lit = 0.62 + 0.55 * lam;
+
+          vec3 surf = mix(land, vec3(1.0), cloud) * lit;
+          // atmósfera en el borde (fresnel)
+          float fr = pow(1.0 - z, 2.6);
+          surf = mix(surf, vec3(0.50, 0.76, 1.0), fr * 0.80);
+          surf += vec3(0.30, 0.50, 0.72) * pow(1.0 - z, 5.0) * 0.8;
+          // borde suave anti-dientes
+          float edge = smoothstep(1.0, 1.0 - 2.5 / uR, d);
+          col = mix(col, surf, edge);
+        }
+        gl_FragColor = vec4(col, 1.0);
+      }`;
+
+    function sh(type, src) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src); gl.compileShader(s);
+      return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+    }
+    const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram();
+    gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    gl.useProgram(prog);
+
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    const U = (n) => gl.getUniformLocation(prog, n);
+    const uRes = U("uRes"), uCenter = U("uCenter"), uR = U("uR"), uLon = U("uLon"), uCloud = U("uCloud");
+
+    const DEG = Math.PI / 180;
+    const LON0 = 60 * DEG;        // Europa / Medio Oriente / Asia al inicio, como el video de noche
+    const SPIN = 1.6 * DEG;       // grados por segundo (oeste → este)
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let t0 = performance.now(), running = false, ready = false, visible = true, raf = 0;
+
+    // Mismo encuadre que la foto fija: centro (502, 926) y radio 635 en una imagen de 1023 x 612.
+    function resize() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const w = heroEl.clientWidth, h = heroEl.clientHeight;
+      canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      const IW = 1023, IH = 612, POS_Y = 0.32;
+      const k = Math.max(w / IW, h / IH);
+      const offX = (w - IW * k) / 2, offY = (h - IH * k) * POS_Y;
+      gl.uniform2f(uRes, canvas.width, canvas.height);
+      gl.uniform2f(uCenter, (offX + 502 * k) * dpr, (offY + 926 * k) * dpr);
+      gl.uniform1f(uR, 635 * k * dpr);
+      draw(performance.now());
+    }
+    function draw(now) {
+      const s = (now - t0) / 1000;
+      gl.uniform1f(uLon, LON0 - s * SPIN);
+      gl.uniform1f(uCloud, -s * SPIN * 0.35);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    }
+    function frame(now) {
+      raf = 0;
+      if (!running) return;
+      draw(now);
+      raf = requestAnimationFrame(frame);
+    }
+    // Se anima solo cuando se ve (luz prendida, pestaña activa, hero en pantalla); al reanudar
+    // continúa desde donde quedó el giro, sin saltos.
+    let elapsed = 0;
+    function updateWithMemory() {
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      const want = ready && visible && !isDark && !document.hidden && !reduced;
+      if (want && !running) { running = true; t0 = performance.now() - elapsed; raf = requestAnimationFrame(frame); }
+      else if (!want && running) { elapsed = performance.now() - t0; running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+    }
+
+    const tex = gl.createTexture();
+    const img = new Image();
+    img.onload = () => {
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.uniform1i(U("uTex"), 0);
+      ready = true;
+      resize();
+      wrap.classList.add("gl-ready");
+      updateWithMemory();
+    };
+    img.src = "assets/img/brand/earth-blue-marble.jpg";
+
+    window.addEventListener("resize", () => { if (ready) resize(); });
+    document.addEventListener("visibilitychange", updateWithMemory);
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((e) => { visible = e[0].isIntersecting; updateWithMemory(); }).observe(heroEl);
+    }
+    new MutationObserver(updateWithMemory).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+  }
+  initHeroDayGL();
+
   function applyTheme(theme) {
     // Evita que las transiciones de color queden "atascadas" al cambiar de tema.
     document.documentElement.classList.add("theme-switching");

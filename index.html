@@ -66,8 +66,9 @@
 
   <section class="hero">
     <div class="hero-bg">
-      <!-- Luz prendida (día): la Tierra de día con giro suave. -->
-      <div class="hero-day" aria-hidden="true">
+      <!-- Luz prendida (día): globo 3D (WebGL) girando; la foto fija queda de respaldo. -->
+      <div class="hero-day" id="heroDay" aria-hidden="true">
+        <canvas class="hero-day-gl" id="heroDayGL"></canvas>
         <div class="hero-day-spin" id="heroDaySpin">
           <div class="hero-day-zoom">
             <img class="hero-day-img" src="assets/img/brand/hero-day-clean.jpg" alt="">

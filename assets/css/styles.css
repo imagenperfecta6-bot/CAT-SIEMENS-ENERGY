@@ -327,6 +327,13 @@ h1,h2,h3,h4{ font-family:var(--font-head); font-weight:800; line-height:1.06; ma
 @media (prefers-reduced-motion: reduce){
   .hero-day-spin{ animation:none; }
 }
+/* Globo 3D (WebGL) con la Tierra de día girando; si funciona, reemplaza a la foto fija. */
+.hero-day-gl{
+  position:absolute; inset:0; width:100%; height:100%; display:block;
+  opacity:0; transition:opacity .9s ease;
+}
+.hero-day.gl-ready .hero-day-gl{ opacity:1; }
+.hero-day.gl-ready .hero-day-spin{ opacity:0; animation:none; transition:opacity .9s ease; }
 .hero-bg-scrim{
   position:absolute; inset:0;
   background:linear-gradient(180deg, rgba(40,20,70,0) 60%, rgba(40,20,70,.32) 100%);
