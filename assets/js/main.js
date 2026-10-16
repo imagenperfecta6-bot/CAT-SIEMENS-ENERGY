@@ -696,6 +696,52 @@ document.addEventListener("DOMContentLoaded", () => {
   const THEME_KEY = "ip7_theme";
   const themeToggle = document.getElementById("themeToggle");
   const themeToggleText = document.getElementById("themeToggleText");
+  const heroBgVideo = document.getElementById("heroBgVideo");
+
+  // Hero: de día se ve la Tierra iluminada (imagen con giro suave en CSS); de noche, el video.
+  // El video solo se reproduce con la luz apagada (así no gasta datos ni batería de día).
+  function syncHeroMedia(isDark) {
+    if (!heroBgVideo) return;
+    if (isDark) heroBgVideo.play().catch(() => {});
+    else heroBgVideo.pause();
+  }
+
+  // El giro de día oscila alrededor del centro del globo de la foto (círculo ajustado al
+  // borde del planeta: centro (502, 926), radio 635 sobre una imagen de 1023 x 612 px).
+  const heroEl = document.querySelector(".hero");
+  const heroDaySpin = document.getElementById("heroDaySpin");
+  function layoutHeroDay() {
+    if (!heroEl || !heroDaySpin) return;
+    const IW = 1023, IH = 612, POS_Y = 0.32; // POS_Y = object-position vertical (center 32%)
+    const w = heroEl.clientWidth, h = heroEl.clientHeight;
+    const scale = Math.max(w / IW, h / IH);
+    const offX = (w - IW * scale) / 2;
+    const offY = (h - IH * scale) * POS_Y;
+    const ox = offX + 502 * scale, oy = offY + 926 * scale;
+    heroDaySpin.style.transformOrigin = ox + "px " + oy + "px";
+
+    // Zoom mínimo (aplicado al centro del hero) para que, al girar ±1.6° alrededor del
+    // globo, la imagen siempre cubra todo el hero sin dejar bordes vacíos.
+    const th = (1.6 * Math.PI) / 180;
+    const hx = w / 2, hy = h / 2;
+    let s = 1.02;
+    for (; s < 1.8; s += 0.01) {
+      let ok = true;
+      [-1, 1].forEach((sign) => {
+        const c = Math.cos(sign * th), sn = Math.sin(sign * th);
+        [[0, 0], [w, 0], [0, h], [w, h]].forEach(([px, py]) => {
+          const dx = px - ox, dy = py - oy;
+          const rx = ox + dx * c - dy * sn, ry = oy + dx * sn + dy * c; // esquina girada
+          const qx = hx + (rx - hx) / s, qy = hy + (ry - hy) / s;       // deshacer el zoom
+          if (qx < 0 || qx > w || qy < 0 || qy > h) ok = false;
+        });
+      });
+      if (ok) break;
+    }
+    heroDaySpin.style.setProperty("--hd-scale", (s + 0.015).toFixed(3));
+  }
+  layoutHeroDay();
+  window.addEventListener("resize", layoutHeroDay);
 
   function applyTheme(theme) {
     // Evita que las transiciones de color queden "atascadas" al cambiar de tema.
@@ -704,10 +750,9 @@ document.addEventListener("DOMContentLoaded", () => {
       requestAnimationFrame(() => document.documentElement.classList.remove("theme-switching"));
     });
 
-    // El hero usa el mismo video de fondo de día y de noche — el toggle de
-    // luz solo cambia la paleta del resto del sitio (ver tokens en CSS).
     // El interruptor (SVG en el HTML) refleja el estado: "prendido" en modo
     // claro/día, "apagado" en modo oscuro/noche — la animación la hace el CSS.
+    syncHeroMedia(theme === "dark");
     if (theme === "dark") {
       document.documentElement.setAttribute("data-theme", "dark");
       themeToggle.classList.remove("lights-on");
@@ -1059,8 +1104,4 @@ document.addEventListener("DOMContentLoaded", () => {
   renderCatalog();
   renderCartUI();
   applyFilters();
-
-  // Refuerzo por si el atributo autoplay no alcanza en algún navegador.
-  const heroBgVideo = document.getElementById("heroBgVideo");
-  if (heroBgVideo) heroBgVideo.play().catch(() => {});
 });

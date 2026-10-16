@@ -66,12 +66,24 @@
 
   <section class="hero">
     <div class="hero-bg">
-      <video id="heroBgVideo" autoplay muted loop playsinline preload="auto" aria-hidden="true">
+      <!-- Luz prendida (día): la Tierra de día con giro suave. -->
+      <div class="hero-day" aria-hidden="true">
+        <div class="hero-day-spin" id="heroDaySpin">
+          <div class="hero-day-zoom">
+            <img class="hero-day-img" src="assets/img/brand/hero-day-clean.jpg" alt="">
+          </div>
+        </div>
+      </div>
+      <!-- Luz apagada (noche): el video de la Tierra de noche (trae su propio texto grabado). -->
+      <video id="heroBgVideo" muted loop playsinline preload="none" aria-hidden="true">
         <source src="assets/video/hero-bg.mp4" type="video/mp4">
       </video>
       <div class="hero-bg-scrim" aria-hidden="true"></div>
     </div>
-    <h1 class="sr-only">Energía para un mundo mejor — Siemens Energy</h1>
+    <h1 class="hero-title">
+      <span class="hero-title-eyebrow">Energía para un mundo mejor</span>
+      <span class="hero-title-brand">Siemens Energy</span>
+    </h1>
     <div class="hero-actions">
       <div class="dropdown" id="exploreDropdown">
         <button class="btn btn-ghost btn-lg dropdown-toggle" type="button" id="exploreDropdownToggle" aria-haspopup="true" aria-expanded="false">
