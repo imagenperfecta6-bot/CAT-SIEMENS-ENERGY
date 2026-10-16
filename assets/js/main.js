@@ -698,11 +698,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const themeToggleText = document.getElementById("themeToggleText");
   const heroBgVideo = document.getElementById("heroBgVideo");
 
-  // Hero: de día se ve la Tierra iluminada (imagen con giro suave en CSS); de noche, el video.
-  // El video solo se reproduce con la luz apagada (así no gasta datos ni batería de día).
+  // Hero: el globo 3D (WebGL) muestra la Tierra de día y de noche. Solo si WebGL no está
+  // disponible ("failed") se usan los respaldos: foto fija de día y video de noche.
+  // El video únicamente se reproduce en ese caso (así no gasta datos ni batería).
+  let heroGLState = "pending"; // pending | ready | failed
   function syncHeroMedia(isDark) {
     if (!heroBgVideo) return;
-    if (isDark) heroBgVideo.play().catch(() => {});
+    if (isDark && heroGLState === "failed") heroBgVideo.play().catch(() => {});
     else heroBgVideo.pause();
   }
 
@@ -743,15 +745,16 @@ document.addEventListener("DOMContentLoaded", () => {
   layoutHeroDay();
   window.addEventListener("resize", layoutHeroDay);
 
-  // Globo 3D de día (WebGL puro, sin librerías): esfera con la textura "Blue Marble" de la NASA,
-  // nubes procedurales y atmósfera. Gira de oeste a este de forma continua. Si WebGL o la
-  // textura fallan, se queda la foto fija de respaldo (con su oscilación en CSS).
-  function initHeroDayGL() {
+  // Globo 3D (WebGL puro, sin librerías): esfera con texturas de la NASA ("Blue Marble" de día,
+  // luces de ciudades de noche), nubes procedurales y atmósfera. Gira de oeste a este de forma
+  // continua y el mismo globo sirve para los dos temas (se funde entre uno y otro). Si WebGL o la
+  // textura fallan, de día queda la foto fija (oscilación CSS) y de noche el video.
+  function initHeroGL() {
     const wrap = document.getElementById("heroDay");
     const canvas = document.getElementById("heroDayGL");
-    if (!wrap || !canvas || !heroEl) return;
+    if (!wrap || !canvas || !heroEl) { heroGLState = "failed"; return; }
     const gl = canvas.getContext("webgl", { antialias: true, alpha: false });
-    if (!gl) return;
+    if (!gl) { heroGLState = "failed"; return; }
 
     const VS = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0.0, 1.0); }";
     const FS = `
@@ -761,7 +764,9 @@ document.addEventListener("DOMContentLoaded", () => {
       uniform float uR;       // radio en px
       uniform float uLon;     // longitud (rad) bajo el centro del disco
       uniform float uCloud;   // desfase de las nubes (rad)
-      uniform sampler2D uTex;
+      uniform float uNight;   // 0 = día, 1 = noche (se anima al cambiar de tema)
+      uniform sampler2D uTexDay;
+      uniform sampler2D uTexNight;
       const float PI = 3.14159265;
       const float LAT0 = 0.0;  // latitud bajo el centro del disco (inclinación de cámara)
 
@@ -772,17 +777,24 @@ document.addEventListener("DOMContentLoaded", () => {
                    mix(mix(hash(i + vec3(0,0,1)), hash(i + vec3(1,0,1)), f.x), mix(hash(i + vec3(0,1,1)), hash(i + vec3(1,1,1)), f.x), f.y), f.z);
       }
       float fbm(vec3 p){ float a = 0.5, s = 0.0; for(int i = 0; i < 5; i++){ s += a * vnoise(p); p = p * 2.03 + 7.1; a *= 0.5; } return s; }
+      float h2(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 
       void main(){
         vec2 frag = vec2(gl_FragCoord.x, uRes.y - gl_FragCoord.y);
         vec2 q = (frag - uCenter) / uR; q.y = -q.y;       // y hacia arriba, radio = 1
         float d = length(q);
 
-        // cielo: azul más profundo arriba, claro y luminoso hacia el borde del planeta
+        // ---- fondo ----
         float h = clamp(frag.y / max(uCenter.y - uR, 1.0), 0.0, 1.0);
-        vec3 sky = mix(vec3(0.34, 0.60, 0.78), vec3(0.50, 0.73, 0.88), smoothstep(0.0, 1.0, h));
-        float glow = exp(-max(d - 1.0, 0.0) * 9.0);
-        vec3 col = mix(sky, vec3(0.74, 0.90, 0.97), glow * 0.85);
+        vec3 skyDay = mix(vec3(0.34, 0.60, 0.78), vec3(0.50, 0.73, 0.88), smoothstep(0.0, 1.0, h));
+        float over = max(d - 1.0, 0.0);
+        vec3 colDay = mix(skyDay, vec3(0.74, 0.90, 0.97), exp(-over * 9.0) * 0.85);
+
+        vec3 colNight = mix(vec3(0.012, 0.006, 0.030), vec3(0.020, 0.030, 0.085), smoothstep(0.0, 1.0, h));
+        vec2 cell = floor(frag / 2.0);                    // estrellas
+        float st = h2(cell);
+        colNight += step(0.9975, st) * (0.35 + 0.65 * h2(cell + 3.7)) * vec3(0.8, 0.85, 1.0) * smoothstep(1.0, 1.04, d);
+        colNight += vec3(0.16, 0.42, 1.0) * (exp(-over * 38.0) * 0.55 + exp(-over * 9.0) * 0.16);
 
         if (d < 1.0) {
           float z = sqrt(1.0 - d * d);
@@ -793,32 +805,51 @@ document.addEventListener("DOMContentLoaded", () => {
           float lat = asin(clamp(w.y, -1.0, 1.0));
           float lon = atan(w.x, w.z) + uLon;
           vec2 uv = vec2(fract(lon / (2.0 * PI) + 0.5), 0.5 - lat / PI);
-          vec3 land = texture2D(uTex, uv).rgb;
-          land = pow(land, vec3(0.92)) * 1.08;
 
           // nubes que giran un poco distinto al suelo
-          vec3 cp = vec3(w.x, w.y, w.z);
           float ca = uCloud, cc = cos(ca), cs = sin(ca);
-          cp = vec3(cc * cp.x + cs * cp.z, cp.y, -cs * cp.x + cc * cp.z);
+          vec3 cp = vec3(cc * w.x + cs * w.z, w.y, -cs * w.x + cc * w.z);
           float c = fbm(cp * 3.2 + vec3(0.0, 0.0, 4.0));
           c += 0.35 * (fbm(cp * 7.0) - 0.5);
-          float cloud = smoothstep(0.52, 0.80, c) * 0.85;
+          float cloud = smoothstep(0.52, 0.80, c);
 
-          // luz del sol desde arriba-izquierda
-          vec3 L = normalize(vec3(-0.45, 0.55, 0.70));
-          float lam = max(dot(n, L), 0.0);
-          float lit = 0.62 + 0.55 * lam;
-
-          vec3 surf = mix(land, vec3(1.0), cloud) * lit;
-          // atmósfera en el borde (fresnel)
-          float fr = pow(1.0 - z, 2.6);
-          surf = mix(surf, vec3(0.50, 0.76, 1.0), fr * 0.80);
-          surf += vec3(0.30, 0.50, 0.72) * pow(1.0 - z, 5.0) * 0.8;
-          // borde suave anti-dientes
           float edge = smoothstep(1.0, 1.0 - 2.5 / uR, d);
-          col = mix(col, surf, edge);
+          float fr = pow(1.0 - z, 2.6);
+
+          if (uNight < 0.999) {
+            vec3 land = texture2D(uTexDay, uv).rgb;
+            land = pow(land, vec3(0.92)) * 1.08;
+            vec3 L = normalize(vec3(-0.45, 0.55, 0.70));
+            float lit = 0.62 + 0.55 * max(dot(n, L), 0.0);
+            vec3 surf = mix(land, vec3(1.0), cloud * 0.85) * lit;
+            surf = mix(surf, vec3(0.50, 0.76, 1.0), fr * 0.80);
+            surf += vec3(0.30, 0.50, 0.72) * pow(1.0 - z, 5.0) * 0.8;
+            colDay = mix(colDay, surf, edge);
+          }
+          if (uNight > 0.001) {
+            vec3 lights = texture2D(uTexNight, uv).rgb;
+            // resplandor: se promedian vecinos para que cada ciudad "sangre" luz alrededor
+            vec2 o = vec2(3.0 / 4096.0, 3.0 / 2048.0);
+            vec3 bloom = texture2D(uTexNight, uv + vec2(o.x, 0.0)).rgb + texture2D(uTexNight, uv - vec2(o.x, 0.0)).rgb
+                       + texture2D(uTexNight, uv + vec2(0.0, o.y)).rgb + texture2D(uTexNight, uv - vec2(0.0, o.y)).rgb;
+            // en esta textura el suelo es azul-verdoso y las luces son cálidas: el canal rojo las aísla
+            float lr = max(lights.r - 0.07, 0.0) + max(bloom.r * 0.45 - 0.03, 0.0);
+            vec3 glow = vec3(1.0, 0.60, 0.20) * pow(lr, 0.75) * 2.7;      // dorado cálido
+            glow += vec3(1.0, 0.80, 0.45) * smoothstep(0.55, 1.0, lr) * 0.6;
+            glow += lights.gb.xxy * vec3(0.0, 0.10, 0.20) * 0.7;           // pista tenue de continentes
+            glow *= (1.0 - cloud * 0.55);                  // las nubes tapan algo de luz
+            glow *= 1.25 - 0.35 * fr;                      // se apagan hacia el borde
+            // luz de luna / amanecer: el borde superior del planeta recibe luz azul
+            float up = clamp(n.y * 0.5 + 0.5, 0.0, 1.0);
+            vec3 base = vec3(0.006, 0.014, 0.042) + vec3(0.014, 0.034, 0.085) * up;
+            base += vec3(0.10, 0.17, 0.30) * cloud * smoothstep(0.35, 1.0, up) * 0.7;
+            vec3 surf = base + glow;
+            surf += vec3(0.12, 0.40, 1.0) * pow(1.0 - z, 3.0) * (0.55 + 0.9 * up);
+            surf += vec3(0.25, 0.55, 1.0) * pow(1.0 - z, 8.0) * 1.1;
+            colNight = mix(colNight, surf, edge);
+          }
         }
-        gl_FragColor = vec4(col, 1.0);
+        gl_FragColor = vec4(mix(colDay, colNight, uNight), 1.0);
       }`;
 
     function sh(type, src) {
@@ -827,10 +858,10 @@ document.addEventListener("DOMContentLoaded", () => {
       return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
     }
     const vs = sh(gl.VERTEX_SHADER, VS), fs = sh(gl.FRAGMENT_SHADER, FS);
-    if (!vs || !fs) return;
+    if (!vs || !fs) { heroGLState = "failed"; return; }
     const prog = gl.createProgram();
     gl.attachShader(prog, vs); gl.attachShader(prog, fs); gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) { heroGLState = "failed"; return; }
     gl.useProgram(prog);
 
     const buf = gl.createBuffer();
@@ -840,13 +871,20 @@ document.addEventListener("DOMContentLoaded", () => {
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
     const U = (n) => gl.getUniformLocation(prog, n);
-    const uRes = U("uRes"), uCenter = U("uCenter"), uR = U("uR"), uLon = U("uLon"), uCloud = U("uCloud");
+    const uRes = U("uRes"), uCenter = U("uCenter"), uR = U("uR"), uLon = U("uLon"),
+          uCloud = U("uCloud"), uNight = U("uNight");
+    gl.uniform1i(U("uTexDay"), 0);
+    gl.uniform1i(U("uTexNight"), 1);
 
     const DEG = Math.PI / 180;
-    const LON0 = 60 * DEG;        // Europa / Medio Oriente / Asia al inicio, como el video de noche
+    const LON0 = 60 * DEG;        // Europa / Medio Oriente / Asia al inicio
     const SPIN = 1.6 * DEG;       // grados por segundo (oeste → este)
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let t0 = performance.now(), running = false, ready = false, visible = true, raf = 0;
+    const isDarkNow = () => document.documentElement.getAttribute("data-theme") === "dark";
+    let running = false, visible = true, raf = 0;
+    let elapsed = 0, t0 = performance.now(), last = 0;
+    let mix = isDarkNow() ? 1 : 0;           // 0 día … 1 noche
+    const loaded = { day: false, night: false };
 
     // Mismo encuadre que la foto fija: centro (502, 926) y radio 635 en una imagen de 1023 x 612.
     function resize() {
@@ -860,55 +898,80 @@ document.addEventListener("DOMContentLoaded", () => {
       gl.uniform2f(uRes, canvas.width, canvas.height);
       gl.uniform2f(uCenter, (offX + 502 * k) * dpr, (offY + 926 * k) * dpr);
       gl.uniform1f(uR, 635 * k * dpr);
-      draw(performance.now());
+      draw(running ? performance.now() - t0 : elapsed);
     }
-    function draw(now) {
-      const s = (now - t0) / 1000;
+    function draw(ms) {
+      const s = ms / 1000;
       gl.uniform1f(uLon, LON0 - s * SPIN);
       gl.uniform1f(uCloud, -s * SPIN * 0.35);
+      gl.uniform1f(uNight, mix);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
     function frame(now) {
       raf = 0;
       if (!running) return;
-      draw(now);
+      const target = isDarkNow() ? 1 : 0;
+      const dt = last ? Math.min((now - last) / 1000, 0.1) : 0;
+      last = now;
+      if (mix !== target) mix = target > mix ? Math.min(target, mix + dt / 0.7) : Math.max(target, mix - dt / 0.7);
+      draw(now - t0);
       raf = requestAnimationFrame(frame);
     }
-    // Se anima solo cuando se ve (luz prendida, pestaña activa, hero en pantalla); al reanudar
-    // continúa desde donde quedó el giro, sin saltos.
-    let elapsed = 0;
-    function updateWithMemory() {
-      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
-      const want = ready && visible && !isDark && !document.hidden && !reduced;
-      if (want && !running) { running = true; t0 = performance.now() - elapsed; raf = requestAnimationFrame(frame); }
+    function isReady() { return isDarkNow() ? loaded.night : loaded.day; }
+    // Se anima solo cuando se ve (pestaña activa y hero en pantalla); al reanudar continúa
+    // desde donde quedó el giro, sin saltos.
+    function update() {
+      const ready = isReady();
+      if (ready && heroGLState !== "ready") {
+        heroGLState = "ready";
+        heroEl.classList.add("gl-ready");
+        wrap.classList.add("gl-ready");
+        syncHeroMedia(isDarkNow());
+        resize();
+      }
+      const want = ready && visible && !document.hidden && !reduced;
+      if (want && !running) { running = true; last = 0; t0 = performance.now() - elapsed; raf = requestAnimationFrame(frame); }
       else if (!want && running) { elapsed = performance.now() - t0; running = false; if (raf) cancelAnimationFrame(raf); raf = 0; }
+      if (!running && ready) { mix = isDarkNow() ? 1 : 0; draw(elapsed); }   // sin animación: cambio directo
     }
 
-    const tex = gl.createTexture();
-    const img = new Image();
-    img.onload = () => {
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-      gl.uniform1i(U("uTex"), 0);
-      ready = true;
-      resize();
-      wrap.classList.add("gl-ready");
-      updateWithMemory();
-    };
-    img.src = "assets/img/brand/earth-blue-marble.jpg";
+    function loadTex(unit, name, key) {
+      const tex = gl.createTexture();
+      const img = new Image();
+      img.onload = () => {
+        gl.activeTexture(gl.TEXTURE0 + unit);
+        gl.bindTexture(gl.TEXTURE_2D, tex);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, img);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        loaded[key] = true;
+        update();
+      };
+      img.onerror = () => {
+        // sin la textura del tema activo no hay globo: se vuelve al respaldo (foto / video)
+        if (heroGLState !== "ready" && (isDarkNow() === (key === "night"))) {
+          heroGLState = "failed";
+          syncHeroMedia(isDarkNow());
+        }
+      };
+      img.src = "assets/img/brand/" + name;
+    }
+    // Primero la textura del tema activo; la otra se pide después, sin competir con la primera.
+    const first = isDarkNow() ? ["night", 1, "earth-night.jpg"] : ["day", 0, "earth-blue-marble.jpg"];
+    const second = isDarkNow() ? ["day", 0, "earth-blue-marble.jpg"] : ["night", 1, "earth-night.jpg"];
+    loadTex(first[1], first[2], first[0]);
+    window.addEventListener("load", () => setTimeout(() => loadTex(second[1], second[2], second[0]), 400));
 
-    window.addEventListener("resize", () => { if (ready) resize(); });
-    document.addEventListener("visibilitychange", updateWithMemory);
+    window.addEventListener("resize", () => { if (isReady()) resize(); });
+    document.addEventListener("visibilitychange", update);
     if ("IntersectionObserver" in window) {
-      new IntersectionObserver((e) => { visible = e[0].isIntersecting; updateWithMemory(); }).observe(heroEl);
+      new IntersectionObserver((e) => { visible = e[0].isIntersecting; update(); }).observe(heroEl);
     }
-    new MutationObserver(updateWithMemory).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    new MutationObserver(update).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
   }
-  initHeroDayGL();
+  initHeroGL();
 
   function applyTheme(theme) {
     // Evita que las transiciones de color queden "atascadas" al cambiar de tema.
