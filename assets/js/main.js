@@ -828,15 +828,23 @@ document.addEventListener("DOMContentLoaded", () => {
           }
           if (uNight > 0.001) {
             vec3 lights = texture2D(uTexNight, uv).rgb;
-            // resplandor: se promedian vecinos para que cada ciudad "sangre" luz alrededor
-            vec2 o = vec2(3.0 / 4096.0, 3.0 / 2048.0);
-            vec3 bloom = texture2D(uTexNight, uv + vec2(o.x, 0.0)).rgb + texture2D(uTexNight, uv - vec2(o.x, 0.0)).rgb
-                       + texture2D(uTexNight, uv + vec2(0.0, o.y)).rgb + texture2D(uTexNight, uv - vec2(0.0, o.y)).rgb;
+            // Nitidez: se resta un desenfoque de 1 texel (máscara de enfoque) para que cada ciudad
+            // sea un punto definido y no una mancha; el resplandor queda pequeño y apretado.
+            vec2 o = vec2(1.0 / 4096.0, 1.0 / 2048.0);
+            float rN = texture2D(uTexNight, uv + vec2(0.0, o.y)).r, rS = texture2D(uTexNight, uv - vec2(0.0, o.y)).r,
+                  rE = texture2D(uTexNight, uv + vec2(o.x, 0.0)).r, rW = texture2D(uTexNight, uv - vec2(o.x, 0.0)).r;
+            float blur1 = (rN + rS + rE + rW) * 0.25;
             // en esta textura el suelo es azul-verdoso y las luces son cálidas: el canal rojo las aísla
-            float lr = max(lights.r - 0.07, 0.0) + max(bloom.r * 0.45 - 0.03, 0.0);
-            vec3 glow = vec3(1.0, 0.60, 0.20) * pow(lr, 0.75) * 2.7;      // dorado cálido
-            glow += vec3(1.0, 0.80, 0.45) * smoothstep(0.55, 1.0, lr) * 0.6;
-            glow += lights.gb.xxy * vec3(0.0, 0.10, 0.20) * 0.7;           // pista tenue de continentes
+            float sharp = lights.r + (lights.r - blur1) * 1.6;
+            float lr = max(sharp - 0.045, 0.0);
+            // luces sueltas: el brillo se concentra en puntos (cada ciudad titila distinto) en vez de una mancha
+            float g = h2(floor(uv * vec2(4096.0, 2048.0) * 1.7));
+            float spark = mix(0.55, 1.55, g * g);
+            lr *= mix(1.0, spark, smoothstep(0.02, 0.35, lr));
+            vec3 glow = vec3(1.0, 0.62, 0.22) * pow(lr, 0.70) * 4.0;      // dorado cálido
+            glow += vec3(1.0, 0.86, 0.55) * smoothstep(0.30, 0.9, lr) * 1.2; // núcleo blanco-cálido
+            glow += vec3(1.0, 0.55, 0.18) * max(blur1 - 0.05, 0.0) * 1.0;    // halo pequeño
+            glow += lights.gb.xxy * vec3(0.0, 0.10, 0.20) * 0.5;           // pista tenue de continentes
             glow *= (1.0 - cloud * 0.55);                  // las nubes tapan algo de luz
             glow *= 1.25 - 0.35 * fr;                      // se apagan hacia el borde
             // luz de luna / amanecer: el borde superior del planeta recibe luz azul
@@ -888,7 +896,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Mismo encuadre que la foto fija: centro (502, 926) y radio 635 en una imagen de 1023 x 612.
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const w = heroEl.clientWidth, h = heroEl.clientHeight;
       canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
       gl.viewport(0, 0, canvas.width, canvas.height);
